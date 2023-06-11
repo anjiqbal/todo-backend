@@ -16,11 +16,14 @@ app.post("/todos", async (req, res) => {
   try {
     const { description } = req.body;
     const newTodo = await pool.query(
-      "INSERT INTO todo (description) VALUES($1)",
+      "INSERT INTO todo (description) VALUES($1) RETURNING *",
       [description]
     );
+    res.json(newTodo.rows[0]); // Respond with the created todo item
+    console.log("successfully added")
   } catch (err) {
     console.log(err.message);
+    res.status(500).json({ error: "An error occurred" }); // Respond with an error message
   }
 });
 
